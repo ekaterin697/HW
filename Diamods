@@ -1,0 +1,230 @@
+In [47]:
+import warnings
+warnings.filterwarnings('ignore')
+
+
+import numpy as np
+import pandas as pd
+import math 
+
+
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import matplotlib.pylab as pylab
+import seaborn as sns
+In [48]:
+df = pd.read_csv("diamonds.csv")
+diamonds = df.copy()
+In [49]:
+# Посмотрим как выглядят данные
+df.head()
+Out[49]:
+Unnamed: 0	carat	cut	color	clarity	depth	table	price	x	y	z
+0	1	0.23	Ideal	E	SI2	61.5	55.0	326	3.95	3.98	2.43
+1	2	0.21	Premium	E	SI1	59.8	61.0	326	3.89	3.84	2.31
+2	3	0.23	Good	E	VS1	56.9	65.0	327	4.05	4.07	2.31
+3	4	0.29	Premium	I	VS2	62.4	58.0	334	4.20	4.23	2.63
+4	5	0.31	Good	J	SI2	63.3	58.0	335	4.34	4.35	2.75
+In [50]:
+#Убрать первый столбец
+df.drop(['Unnamed: 0'] , axis=1 , inplace=True)
+df.head()
+Out[50]:
+carat	cut	color	clarity	depth	table	price	x	y	z
+0	0.23	Ideal	E	SI2	61.5	55.0	326	3.95	3.98	2.43
+1	0.21	Premium	E	SI1	59.8	61.0	326	3.89	3.84	2.31
+2	0.23	Good	E	VS1	56.9	65.0	327	4.05	4.07	2.31
+3	0.29	Premium	I	VS2	62.4	58.0	334	4.20	4.23	2.63
+4	0.31	Good	J	SI2	63.3	58.0	335	4.34	4.35	2.75
+In [51]:
+df.shape
+Out[51]:
+(53940, 10)
+In [52]:
+df.info()
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 53940 entries, 0 to 53939
+Data columns (total 10 columns):
+carat      53940 non-null float64
+cut        53940 non-null object
+color      53940 non-null object
+clarity    53940 non-null object
+depth      53940 non-null float64
+table      53940 non-null float64
+price      53940 non-null int64
+x          53940 non-null float64
+y          53940 non-null float64
+z          53940 non-null float64
+dtypes: float64(6), int64(1), object(3)
+memory usage: 4.1+ MB
+In [53]:
+# Проверим существуют ли пустые значения
+df.isnull().sum()
+Out[53]:
+carat      0
+cut        0
+color      0
+clarity    0
+depth      0
+table      0
+price      0
+x          0
+y          0
+z          0
+dtype: int64
+In [54]:
+df.describe()
+Out[54]:
+carat	depth	table	price	x	y	z
+count	53940.000000	53940.000000	53940.000000	53940.000000	53940.000000	53940.000000	53940.000000
+mean	0.797940	61.749405	57.457184	3932.799722	5.731157	5.734526	3.538734
+std	0.474011	1.432621	2.234491	3989.439738	1.121761	1.142135	0.705699
+min	0.200000	43.000000	43.000000	326.000000	0.000000	0.000000	0.000000
+25%	0.400000	61.000000	56.000000	950.000000	4.710000	4.720000	2.910000
+50%	0.700000	61.800000	57.000000	2401.000000	5.700000	5.710000	3.530000
+75%	1.040000	62.500000	59.000000	5324.250000	6.540000	6.540000	4.040000
+max	5.010000	79.000000	95.000000	18823.000000	10.740000	58.900000	31.800000
+In [57]:
+sns.factorplot(data=df , kind='box' , size=7, aspect=2.5)
+Out[57]:
+<seaborn.axisgrid.FacetGrid at 0x1d93ce005c0>
+
+In [23]:
+# Correlation Map
+corr = df.corr()
+sns.heatmap(data=corr, square=True , annot=True, cbar=True)
+Out[23]:
+<matplotlib.axes._subplots.AxesSubplot at 0x1d93b029390>
+
+In [24]:
+# Visualize via kde plots
+In [25]:
+sns.kdeplot(df['carat'], shade=True , color='r')
+Out[25]:
+<matplotlib.axes._subplots.AxesSubplot at 0x1d93b130198>
+
+Carat vs Price
+In [26]:
+sns.jointplot(x='carat' , y='price' , data=df , size=5)
+Out[26]:
+<seaborn.axisgrid.JointGrid at 0x1d93b1a2748>
+
+It seems that Carat varies with Price Exponentially.
+In [27]:
+sns.factorplot(x='cut', data=df , kind='count',aspect=2.5 )
+Out[27]:
+<seaborn.axisgrid.FacetGrid at 0x1d93b2e1128>
+
+Cut vs Price
+In [28]:
+sns.factorplot(x='cut', y='price', data=df, kind='box' ,aspect=2.5 )
+Out[28]:
+<seaborn.axisgrid.FacetGrid at 0x1d93b3cc160>
+
+In [29]:
+# Understanding Box Plot :
+
+# The bottom line indicates the min value of Age.
+# The upper line indicates the max value.
+# The middle line of the box is the median or the 50% percentile.
+# The side lines of the box are the 25 and 75 percentiles respectively.
+In [ ]:
+
+In [30]:
+sns.factorplot(x='color', data=df , kind='count',aspect=2.5 )
+Out[30]:
+<seaborn.axisgrid.FacetGrid at 0x1d93c9d21d0>
+
+Color vs Price
+In [31]:
+sns.factorplot(x='color', y='price' , data=df , kind='violin', aspect=2.5)
+Out[31]:
+<seaborn.axisgrid.FacetGrid at 0x1d93bd11978>
+
+In [ ]:
+
+In [32]:
+labels = df.clarity.unique().tolist()
+sizes = df.clarity.value_counts().tolist()
+colors = ['#006400', '#E40E00', '#A00994', '#613205', '#FFED0D', '#16F5A7','#ff9999','#66b3ff']
+explode = (0.1, 0.0, 0.1, 0, 0.1, 0, 0.1,0)
+plt.pie(sizes, explode=explode, labels=labels, colors=colors,autopct='%1.1f%%', shadow=True, startangle=0)
+plt.axis('equal')
+plt.title("Percentage of Clarity Categories")
+plt.plot()
+fig=plt.gcf()
+fig.set_size_inches(6,6)
+plt.show()
+
+In [33]:
+sns.boxplot(x='clarity', y='price', data=df )
+Out[33]:
+<matplotlib.axes._subplots.AxesSubplot at 0x1d93e1a1828>
+
+In [43]:
+plt.hist('depth' , data=df , bins=25)
+Out[43]:
+(array([3.0000e+00, 0.0000e+00, 0.0000e+00, 0.0000e+00, 0.0000e+00,
+        2.0000e+00, 4.0000e+00, 1.1000e+01, 4.3000e+01, 2.1900e+02,
+        1.4240e+03, 5.0730e+03, 1.8242e+04, 2.2649e+04, 5.0330e+03,
+        8.5100e+02, 2.3400e+02, 8.7000e+01, 2.7000e+01, 1.1000e+01,
+        3.0000e+00, 1.0000e+00, 0.0000e+00, 0.0000e+00, 3.0000e+00]),
+ array([43.  , 44.44, 45.88, 47.32, 48.76, 50.2 , 51.64, 53.08, 54.52,
+        55.96, 57.4 , 58.84, 60.28, 61.72, 63.16, 64.6 , 66.04, 67.48,
+        68.92, 70.36, 71.8 , 73.24, 74.68, 76.12, 77.56, 79.  ]),
+ <a list of 25 Patch objects>)
+
+In [35]:
+sns.jointplot(x='depth', y='price' , data=df , kind='regplot', size=5)
+Out[35]:
+<seaborn.axisgrid.JointGrid at 0x1d93c11ceb8>
+
+In [36]:
+sns.kdeplot(df['table'] ,shade=True , color='orange')
+Out[36]:
+<matplotlib.axes._subplots.AxesSubplot at 0x1d93c3e9240>
+
+In [37]:
+sns.jointplot(x='table', y='price', data=df , size=5)
+Out[37]:
+<seaborn.axisgrid.JointGrid at 0x1d93c33ca90>
+
+In [ ]:
+
+In [38]:
+sns.kdeplot(df['x'] ,shade=True , color='r' )
+sns.kdeplot(df['y'] , shade=True , color='g' )
+sns.kdeplot(df['z'] , shade= True , color='b')
+plt.xlim(2,10)
+Out[38]:
+(2, 10)
+
+Создадим новое значение объем
+In [39]:
+df['volume'] = df['x']*df['y']*df['z']
+df.head()
+Out[39]:
+carat	cut	color	clarity	depth	table	price	x	y	z	volume
+0	0.23	Ideal	E	SI2	61.5	55.0	326	3.95	3.98	2.43	38.202030
+1	0.21	Premium	E	SI1	59.8	61.0	326	3.89	3.84	2.31	34.505856
+2	0.23	Good	E	VS1	56.9	65.0	327	4.05	4.07	2.31	38.076885
+3	0.29	Premium	I	VS2	62.4	58.0	334	4.20	4.23	2.63	46.724580
+4	0.31	Good	J	SI2	63.3	58.0	335	4.34	4.35	2.75	51.917250
+In [40]:
+plt.figure(figsize=(5,5))
+plt.hist( x=df['volume'] , bins=30 ,color='g')
+plt.xlabel('Volume in mm^3')
+plt.ylabel('Frequency')
+plt.title('Distribution of Diamond\'s Volume')
+plt.xlim(0,1000)
+plt.ylim(0,50000)
+Out[40]:
+(0, 50000)
+
+In [41]:
+sns.jointplot(x='volume', y='price' , data=df, size=5)
+Out[41]:
+<seaborn.axisgrid.JointGrid at 0x1d93c85f4e0>
+
+Зависимость похожа на линейную
+In [ ]:
